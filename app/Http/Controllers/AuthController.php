@@ -100,23 +100,6 @@ class AuthController extends Controller
     // Logout: deletes current token
     public function logout(Request $request)
     {
-        // Log all incoming request headers
-        Log::info('product-api.AuthController.logout: Incoming Request Headers =>', $request->headers->all());
-        // Check for Authorization header
-        if ($request->hasHeader('Authorization')) {
-            $authorizationHeader = $request->header('Authorization');
-            Log::info('product-api.AuthController.logout: Authorization Header Found =>', ['header' => $authorizationHeader]);
-
-            // Check if it's a Bearer token
-            if (str_starts_with($authorizationHeader, 'Bearer ')) {
-                $token = substr($authorizationHeader, 7); // Extract the token
-                Log::info('product-api.AuthController.logout: Bearer Token Found =>', ['token' => $token]);
-            } else {
-                Log::warning('product-api.AuthController.logout: Authorization header found but not in Bearer format.');
-            }
-        } else {
-            Log::warning('product-api.AuthController.logout: Authorization Header Not Found in Request.');
-        }
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out']);
     }
@@ -175,23 +158,6 @@ class AuthController extends Controller
     // Optional: get current user info
     public function profile(Request $request)
     {
-        // Log all incoming request headers
-        Log::info('product-api.AuthController.profile: Incoming Request Headers =>', $request->headers->all());
-        // Check for Authorization header
-        if ($request->hasHeader('Authorization')) {
-            $authorizationHeader = $request->header('Authorization');
-            Log::info('product-api.AuthController.profile: Authorization Header Found =>', ['header' => $authorizationHeader]);
-
-            // Check if it's a Bearer token
-            if (str_starts_with($authorizationHeader, 'Bearer ')) {
-                $token = substr($authorizationHeader, 7); // Extract the token
-                Log::info('product-api.AuthController.profile: Bearer Token Found =>', ['token' => $token]);
-            } else {
-                Log::warning('product-api.AuthController.profile: Authorization header found but not in Bearer format.');
-            }
-        } else {
-            Log::warning('product-api.AuthController.profile: Authorization Header Not Found in Request.');
-        }
         return response()->json($request->user());
     }
 }
