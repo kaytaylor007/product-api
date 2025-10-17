@@ -25,7 +25,8 @@ class AppServiceProvider extends ServiceProvider
         //
         Schema::defaultStringLength(191);
         ResetPassword::createUrlUsing(function (User $user, string $token) {
-            return "https://productdb.alwaysdata.net/reset-password?token={$token}&email={$user->email}";
+            // return "https://productdb.alwaysdata.net/reset-password?token={$token}&email={$user->email}";
+            return "productdb://reset-password?token={$token}&email={$user->email}";
         });
     }
 }
