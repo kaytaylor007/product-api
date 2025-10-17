@@ -17,7 +17,7 @@ class LogRequestHeaders
      */
     public function handle(Request $request, Closure $next)
     {
-        Log::info('product-api.LogRequestHeaders.handle: Incoming Request Url =>', $request->fullUrl());
+        Log::info('product-api.LogRequestHeaders.handle: Incoming Request Url =>', ['fullUrl' => $request->fullUrl()]);
 
         // Log all incoming request headers
         Log::info('product-api.LogRequestHeaders.handle: Incoming Request Headers =>', $request->headers->all());
