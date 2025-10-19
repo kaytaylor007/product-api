@@ -10,10 +10,10 @@ class PriceRecord extends Model {
     protected $keyType = 'string';
     protected $fillable = [
       'id','product_id','chain_id','price_amount','currency','unit',
-      'effective_at','reported_by','status','source_type','photo_url','notes'
+      'effective_at','reported_by','approved_by','approved_at','status','source_type','photo_url','notes'
     ];
 
-    protected $casts = ['effective_at'=>'datetime','price_amount'=>'decimal:2'];
+    protected $casts = ['effective_at'=>'datetime','approved_at'=>'datetime','price_amount'=>'decimal:2'];
 
     protected static function booted() {
         static::creating(fn($m)=> $m->id ??= (string) Str::uuid());
@@ -22,4 +22,5 @@ class PriceRecord extends Model {
     public function product() { return $this->belongsTo(Product::class); }
     public function chain() { return $this->belongsTo(RetailChain::class,'chain_id'); }
     public function reporter() { return $this->belongsTo(User::class,'reported_by'); }
+    public function approver() { return $this->belongsTo(User::class,'approved_by'); }
 }

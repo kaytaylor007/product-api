@@ -23,6 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products', [ProductController::class,'index']);
     Route::get('/products/{productId}/prices', [PriceController::class,'listForProduct']);
     Route::post('/prices', [PriceController::class,'store']);
+
+    Route::get('/prices/pending', [PriceController::class, 'pendingList'])->middleware('role:moderator,admin');
+    Route::post('/prices/{id}/approve', [PriceController::class, 'approve'])->middleware('role:moderator,admin');
+    Route::post('/prices/{id}/reject', [PriceController::class, 'reject'])->middleware('role:moderator,admin');
 });
 
 // <?php
