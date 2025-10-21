@@ -17,14 +17,70 @@ class ProductController extends Controller {
     }
 
     public function showByGtin(Request $r, $gtin) {
-        $product = Product::where('gtin',$gtin)->with(['primaryImage','images'])->first();
-        if (!$product) return response()->json(['exists'=>false],404);
-
-        $ret = ['exists'=>true,'product'=>$product];
+        $product = Product::where('gtin', $gtin)->with(['primaryImage', 'images'])->first();
+        if (!$product) return response()->json(['exists'=>false], 404);
+        $latestPrices = $product->prices()
+            ->where('status', 'approved')
+            ->with(['chain:id,name'])
+            ->orderByDesc('effective_at')
+            ->get()
+            ->groupBy('chain_id')
+            ->map(fn($g) => $g->first())
+            ->values()
+            ->map(function ($price) {
+                return [
+                    'id' => $price->id,
+                    'price_amount' => $price->price_amount,
+                    'currency' => $price->currency,
+                    'unit' => $price->unit,
+                    'effective_at' => $price->effective_at,
+                    'chain' => [
+                        'id' => $price->chain->id,
+                        'name' => $price->chain->name,
+                    ],
+                ];
+            });
+        return response()->json([
+            'exists' => true,
+            'product' => $product,
+            'latest_prices' => $latestPrices
+        ]);        
+        /*$ret = ['exists'=>true, 'product'=>$product];
         if ($r->query('chain_id')) {
             $ret['latest_price_for_chain'] = $product->latestApprovedPriceForChain($r->query('chain_id'));
         }
-        return response()->json($ret);
+        return response()->json($ret);*/
+    }
+
+    public function show($id) {
+        $product = Product::with(['primaryImage', 'images'])->find($id);
+        if (!$product) return response()->json(['exists'=>false], 404);
+        $latestPrices = $product->prices()
+            ->where('status', 'approved')
+            ->with(['chain:id,name'])
+            ->orderByDesc('effective_at')
+            ->get()
+            ->groupBy('chain_id')
+            ->map(fn($g) => $g->first())
+            ->values()
+            ->map(function ($price) {
+                return [
+                    'id' => $price->id,
+                    'price_amount' => $price->price_amount,
+                    'currency' => $price->currency,
+                    'unit' => $price->unit,
+                    'effective_at' => $price->effective_at,
+                    'chain' => [
+                        'id' => $price->chain->id,
+                        'name' => $price->chain->name,
+                    ],
+                ];
+            });
+        return response()->json([
+            'exists' => true,
+            'product' => $product,
+            'latest_prices' => $latestPrices
+        ]);        
     }
 
     public function store(Request $r) {

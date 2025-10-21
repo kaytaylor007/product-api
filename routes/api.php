@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/chains', [RetailChainController::class, 'index']);
     Route::get('/products/gtin/{gtin}', [ProductController::class,'showByGtin']);
+    Route::get('/products/{id}', [ProductController::class, 'show']);
     Route::post('/products', [ProductController::class,'store']);
     Route::put('/products/{id}', [ProductController::class,'update']);
     Route::get('/products', [ProductController::class,'index']);
